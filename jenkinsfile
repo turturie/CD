@@ -3,26 +3,35 @@ node {
     stage('checkout') {
       checkout scm
     }
-    stage('prepare') {
-      sh "git clean -fdx"
-    }
     stage('compile') {
-      echo "nothing to compile for hello.sh..."
+      echo "compiling code..."
     }
-    stage('test') {
-      echo "nothing to test for hello.sh..."
+    stage('unit test') {
+      echo "running unit test..."
     }
-    stage('package') {
-      echo "create package for hello.sh..."
+    stage('sonarQube'){
+      echo "running static analysis..."
     }
     stage('publish') {
-      echo "uploading package..."
+      echo "package and publish..."
     }
-    
+    stage('INT deploy'){
+      echo "deploy to int..."
+    }
+    stage('acceptance tests'){
+      echo "running acceptance test..."
+    }
+    stage('PERF deploy'){
+      echo "deploy to PERF"
+    }
+    stage('performance test'){
+      echo "running performance tests..."
+    }
+      
     def tag = sh(returnStdout: true, script: "git tag --contains | head -1").trim()
     if (tag) {
         stage("deploy to STG") {
-            echo "uploading package..."
+            echo "deploy to STG..."
         }
     }
   } finally {
