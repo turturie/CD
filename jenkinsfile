@@ -1,11 +1,14 @@
 node {
   try {
+    //this needs to be the very first steps!
+    checkout()
+     
+      
     def branch_type = get_branch_type(env.BRANCH_NAME)
     echo env.BRANCH_NAME
     echo branch_type
     
     
-    checkout()
     if ( branch_type == "pr") {
       commit_stage()
     } else if ( branch_type == "master") {
