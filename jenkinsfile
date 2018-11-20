@@ -1,40 +1,94 @@
 node {
   try {
-    stage('checkout') {
-      checkout scm
+    def branch_type = get_branch_type(env.BRANCH_NAME)
+    if (env.BRANCH_NAME.startsWith('PR')) {
+      echo "I am a PR"
     }
-    stage('compile') {
-      echo "compiling code..."
+    
+    
+    commit_stage()
+    
+    if ( branch_type == "master") {
+      publish_artifact()
+      deploy("INT")
+      acceptance_test()
+      deploy("PERF")
+      performance_test()
+    } else if (branch_type == "tag") {
+      deploy("STG")
     }
-    stage('unit test') {
-      echo "running unit test..."
-    }
-    stage('sonarQube'){
-      echo "running static analysis..."
-    }
-    stage('publish') {
-      echo "package and publish..."
-    }
-    stage('INT deploy'){
-      echo "deploy to int..."
-    }
-    stage('acceptance tests'){
-      echo "running acceptance test..."
-    }
-    stage('PERF deploy'){
-      echo "deploy to PERF"
-    }
-    stage('performance test'){
-      echo "running performance tests..."
-    }
+    
+    
+    
+    
+    
       
-    def tag = sh(returnStdout: true, script: "git tag --contains | head -1").trim()
-    if (tag) {
-        stage("deploy to STG") {
-            echo "deploy to STG..."
-        }
-    }
+    //def tag = sh(returnStdout: true, script: "git tag --contains | head -1").trim()
+    
   } finally {
       echo "doing some cleanup..."
   }
+}
+
+//utility
+def commit_stage() {
+  stage('checkout') {
+    checkout scm
+  }
+  stage('compile') {
+    echo "compiling code..."
+  }
+  stage('unit test') {
+    echo "running unit test..."
+  }
+  stage('sonarQube'){
+    echo "running static analysis..."
+  }
+}
+
+def publish_artifact(){
+  stage('publish') {
+      echo "package and publish artifact..."
+  }
+}
+
+def deploy(String env){
+  stage(env + ' deploy'){
+      echo "deploy to " + env
+    }
+}
+
+def acceptance_test(){
+    stage('acceptance tests'){
+      echo "running acceptance test..."
+    }
+}
+
+def performance_test(){
+    stage('performance test'){
+      echo "running performance tests..."
+    }
+
+}
+
+def get_branch_type(String branch_name) {
+    //Must be specified according to <flowInitContext> configuration of jgitflow-maven-plugin in pom.xml
+    def master_pattern = ".*master"
+    def release_pattern = ".*release/.*"
+    def feature_pattern = ".*feature/.*"
+    def tag_pattern = ".*tag/.*" 
+    def pr_pattern = ".*PR/.*"
+    if (branch_name =~ master_pattern) {
+        return "master"
+    } else if (branch_name =~ release_pattern) {
+        return "release"
+    } else if (branch_name =~ feature_pattern) {
+        return "feature"
+    } else if (branch_name =~ tag_pattern) {
+        return "tag"
+    } else if (branch_name =~ pr_pattern) {
+    return "pr"
+    } else {
+        return null;
+    }
 }
