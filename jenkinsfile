@@ -40,10 +40,8 @@ def checkout(){
     checkout scm
   }
 }
+
 def commit_stage() {
-  stage('compile') {
-    echo "compiling code..."
-  }
   stage('unit test') {
     echo "running unit test..."
   }
