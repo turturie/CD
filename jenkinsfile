@@ -2,14 +2,13 @@ node {
   try {
     //this needs to be the very first steps!
     checkout()
-    def version = readFile "${env.WORKSPACE}/version.txt"
+    def version = readFile("ersion.txt")
 
      
       
     def branch_type = get_branch_type(env.BRANCH_NAME)
     echo env.BRANCH_NAME
     echo branch_type
-    echo "version is: " + version
     currentBuild.displayName = "${version}-${BUILD_NUMBER}"
     
     
