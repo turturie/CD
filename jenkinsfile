@@ -4,6 +4,8 @@ node {
     echo env.BRANCH_NAME
     echo branch_type
     
+    
+    checkout()
     if ( branch_type == "pr") {
       commit_stage()
     } else if ( branch_type == "master") {
@@ -27,10 +29,12 @@ node {
 }
 
 //utility
-def commit_stage() {
+def checkout(){
   stage('checkout') {
     checkout scm
   }
+}
+def commit_stage() {
   stage('compile') {
     echo "compiling code..."
   }
