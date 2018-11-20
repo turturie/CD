@@ -10,6 +10,7 @@ node {
     echo env.BRANCH_NAME
     echo branch_type
     echo "version is: " + version
+    currentBuild.description = version
     
     
     if ( branch_type == "pr") {
