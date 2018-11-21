@@ -72,7 +72,7 @@ def deploy(String env){
                 ]   
               )
      writeFile(file: "version.txt", text: versionInput, encoding: "UTF-8")
-     sh "git commit version.txt -m "Bump version to ${versionInput}"
+     sh "git commit version.txt -m 'Bump version to ${versionInput}'"
      sh "git push"
      sh "git tag ${versionInput}"
      sh "git push origin ${versionInput}"
