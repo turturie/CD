@@ -76,8 +76,9 @@ def deploy(String env){
      withCredentials([usernamePassword(credentialsId: "GitHub", passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                 sh "git config user.email 'jenkins@example.com'"
                 sh "git commit version.txt -m 'Bump version to ${nextVersion}'"
+                sh "git push"
                 sh "git tag ${version}"
-                sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${repository} ${version}"
+                sh "git push ${version}"
             }
     
     }
