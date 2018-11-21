@@ -73,7 +73,7 @@ def deploy(String env){
               )
      writeFile(file: "version.txt", text: versionInput, encoding: "UTF-8")
      
-     withCredentials([usernamePassword(credentialsId: your_credentials, passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+     withCredentials([usernamePassword(credentialsId: GitHub, passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
 
                 sh "git commit version.txt -m 'Bump version to ${versionInput}+0.1'"
                 sh "git tag ${versionInput}"
