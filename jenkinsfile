@@ -12,7 +12,6 @@ node {
     echo branch_type
     currentBuild.displayName = "${version}-${BUILD_NUMBER}"
     
-    echo sh(script: 'env', returnStdout: true)
 
     
     if ( branch_type == "pr") {
@@ -30,8 +29,14 @@ node {
       deploy("PROD")
     }
     
-      
-    //def tag = sh(returnStdout: true, script: "git tag --contains | head -1").trim()
+  } catch(err) { // timeout reached or input false
+    def user = err.getCauses()[0].getUser()
+    if('SYSTEM' == user.toString()) { // SYSTEM means timeout.
+        currentBuild.result = 'SUCCESS'
+    } else {
+        echo "Aborted by: [${user}]"
+    }
+}    
     
   } finally {
       echo "doing some cleanup..."
@@ -63,26 +68,27 @@ def publish_artifact(){
 def deploy(String env){
   stage(env + ' deploy'){
   if( env == "STG") {
-    def nextVersion = input(
-        id: 'nextVersion', message: 'insert next version: ', ok: 'ok', parameters: [string(description: 'enter the next development version', name: 'nextVersion')]
-    )
+  	timeout(time: 1, unit: 'MINUTES') {
+    		def nextVersion = input(
+        		id: 'nextVersion', message: 'insert next version: ', ok: 'ok', parameters: [string(description: 'enter the next development version', name: 'nextVersion')]
+    		)
     
-     writeFile(file: "version.txt", text: nextVersion, encoding: "UTF-8")
+		writeFile(file: "version.txt", text: nextVersion, encoding: "UTF-8")
      
-     withCredentials([usernamePassword(credentialsId: "GitHub", passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                def urlGit = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
-			          urlGit = urlGit.replace('https://','')
+     		withCredentials([usernamePassword(credentialsId: "GitHub", passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                	def urlGit = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
+			urlGit = urlGit.replace('https://','')
                 
-                sh "git config user.email 'jenkins@example.com'"
-                sh "git commit version.txt -m 'Bump version to ${nextVersion}'"
+                	sh "git config user.email 'jenkins@example.com'"
+                	sh "git commit version.txt -m 'Bump version to ${nextVersion}'"
 
-                sh "git tag ${version}"
+                	sh "git tag ${version}"
                 
-                sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${urlGit} HEAD:master"
-                sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${urlGit} ${version}"
+                	sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${urlGit} HEAD:master"
+                	sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${urlGit} ${version}"
                  
-            }
-            
+            	}
+	}
     chooseOptions = input(id: 'chooseOptions',
                 message: 'Select zone(s)',    
                 parameters: [                           
