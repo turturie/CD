@@ -79,7 +79,7 @@ def deploy(String env){
 
                 sh "git tag ${version}"
                 
-                sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${urlGit}"
+                sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${urlGit} HEAD:master"
                 sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${urlGit} ${version}"
                  
             }
