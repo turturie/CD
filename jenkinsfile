@@ -1,6 +1,7 @@
 node {
   try {
     //this needs to be the very first steps!
+    deleteDir()
     checkout()
     version = readFile("version.txt")
 
