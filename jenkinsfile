@@ -21,8 +21,9 @@ node {
       acceptance_test()
       deploy("PERF")
       performance_test()
-    } else if (branch_type == "tag") {
       deploy("STG")
+    } else if (branch_type == "tag") {
+      
       deploy("PROD")
     }
     
@@ -58,6 +59,25 @@ def publish_artifact(){
 
 def deploy(String env){
   stage(env + ' deploy'){
+  if( env == "STG") {
+    def versionInput = input(
+        id: 'tag', message: 'tag as version: ', ok: 'ok', parameters: [string(description: 'enter the tag version for git', name: 'LIB_TEST')]
+    )
+    chooseOptions = input(id: 'chooseOptions',
+                message: 'Select zone(s)',    
+                parameters: [                           
+                  [$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Option A'],    
+                  [$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Option B'],
+                  [$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Option C']
+                ]   
+              )
+     writeFile(file: "version.txt", text: versionInput, encoding: "UTF-8")
+     sh "git push origin master"
+     sh "git tag ${versionInput}"
+     sh "git push origin ${versionInput}"
+    }
+  
+  
     if( env == "PROD") {
     chooseOptions = input(id: 'chooseOptions',
                 message: 'Select zone(s)',    
