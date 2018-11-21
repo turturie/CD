@@ -2,7 +2,7 @@ node {
   try {
     //this needs to be the very first steps!
     checkout()
-    def version = readFile("version.txt")
+    version = readFile("version.txt")
 
      
       
