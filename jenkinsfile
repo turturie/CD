@@ -35,9 +35,7 @@ node {
         currentBuild.result = 'SUCCESS'
     } else {
         echo "Aborted by: [${user}]"
-    }
-}    
-    
+    }    
   } finally {
       echo "doing some cleanup..."
   }
