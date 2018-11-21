@@ -8,10 +8,12 @@ node {
      
       
     def branch_type = get_branch_type(env.BRANCH_NAME)
-    echo env
+    echo env.BRANCH_NAME
     echo branch_type
     currentBuild.displayName = "${version}-${BUILD_NUMBER}"
     
+    echo sh(script: 'env', returnStdout: true)
+
     
     if ( branch_type == "pr") {
       commit_stage()
