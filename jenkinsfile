@@ -31,7 +31,6 @@
 	} finally {
 		echo "doing some cleanup..."
 	}
-  }
 
 //utility
 def checkout(){
