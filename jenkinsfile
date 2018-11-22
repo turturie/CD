@@ -6,6 +6,8 @@ node {
     version = readFile("version.txt")
 
      
+     
+     
     def branch_type = get_branch_type(env.BRANCH_NAME)
     echo env.BRANCH_NAME
     echo branch_type
