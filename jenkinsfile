@@ -30,14 +30,15 @@ node {
     }
     
   } catch(err) { // timeout reached or input false
-    def user = err.getCauses()[0].getUser()
-    if('SYSTEM' == user.toString()) { // SYSTEM means timeout.
-        currentBuild.result = 'SUCCESS'
-    } else {
-        echo "Aborted by: [${user}]"
-    }    
+    	def user = err.getCauses()[0].getUser()
+    	if('SYSTEM' == user.toString()) { // SYSTEM means timeout.
+		currentBuild.result = 'SUCCESS'
+    	} else {
+		echo "Aborted by: [${user}]"
+    	}    
   } finally {
-      echo "doing some cleanup..."
+	echo "doing some cleanup..."
+	}
   }
 }
 
@@ -123,27 +124,25 @@ def performance_test(){
     stage('performance test'){
       echo "running performance tests..."
     }
-
 }
 
 def get_branch_type(String branch_name) {
-    //Must be specified according to <flowInitContext> configuration of jgitflow-maven-plugin in pom.xml
-    def master_pattern = ".*master"
-    def release_pattern = ".*release/.*"
-    def feature_pattern = ".*feature/.*"
-    def pr_pattern = ".*PR-.*"
-    def tag_pattern = sh(returnStdout: true, script: "git tag --contains | head -1").trim()
-    if (branch_name =~ master_pattern) {
-        return "master"
-    } else if (branch_name =~ release_pattern) {
-        return "release"
-    } else if (branch_name =~ feature_pattern) {
-        return "feature"
-    } else if (tag_pattern) {
-        return "tag"
-    } else if (branch_name =~ pr_pattern) {
-        return "pr"
-    } else {
-        return null;
-    }
+	//Must be specified according to <flowInitContext> configuration of jgitflow-maven-plugin in pom.xml
+	def master_pattern = ".*master"
+	def release_pattern = ".*release/.*"
+	def feature_pattern = ".*feature/.*"
+	def pr_pattern = ".*PR-.*"
+	def tag_pattern = sh(returnStdout: true, script: "git tag --contains | head -1").trim()
+	if (branch_name =~ master_pattern) {
+	return "master"
+	} else if (branch_name =~ release_pattern) {
+	return "release"
+	} else if (branch_name =~ feature_pattern) {
+	return "feature"
+	} else if (tag_pattern) {
+	return "tag"
+	} else if (branch_name =~ pr_pattern) {
+	return "pr"
+	} else {
+	return null;
 }
