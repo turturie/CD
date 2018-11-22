@@ -40,6 +40,9 @@ node {
   }
 }
 
+
+
+
 //utility
 def checkout(){
   stage('checkout') {
