@@ -1,6 +1,6 @@
  try {    
     checkout()
-    version = readFile("version.txt")
+    version
     
     def branch_type = get_branch_type(env.BRANCH_NAME)
     currentBuild.displayName = "${version}-build${BUILD_NUMBER}"
@@ -38,6 +38,7 @@ def checkout(){
   		node{
 			deleteDir()
     		checkout scm
+			version = readFile("version.txt")
   		}
 	}
 }
