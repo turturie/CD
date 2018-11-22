@@ -7,33 +7,31 @@
     
 
     
-    if ( branch_type == "pr") {
-      commit_stage()
-    } else if ( branch_type == "master") {
-      commit_stage()
-      publish_artifact()
-      deploy("INT")
-      acceptance_test()
-      deploy("PERF")
-      performance_test()
-      deploy("STG")
-    } else if (branch_type == "tag") {
-      
-      deploy("PROD")
+	if ( branch_type == "pr") {
+    	commit_stage()
+	} else if ( branch_type == "master") {
+      	commit_stage()
+      	publish_artifact()
+      	deploy("INT")
+      	acceptance_test()
+      	deploy("PERF")
+      	performance_test()
+      	deploy("STG")
+    } else if (branch_type == "tag") { 
+      	deploy("PROD")
     }
     
-  } catch(err) { // timeout reached or input false
+	} catch(err) { // timeout reached or input false
     	def user = err.getCauses()[0].getUser()
     	if('SYSTEM' == user.toString()) { // SYSTEM means timeout.
-		currentBuild.result = 'SUCCESS'
+			currentBuild.result = 'SUCCESS'
     	} else {
 		echo "Aborted by: [${user}]"
     	}    
-  } finally {
-	echo "doing some cleanup..."
+	} finally {
+		echo "doing some cleanup..."
 	}
   }
-}
 
 //utility
 def checkout(){
