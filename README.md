@@ -1,2 +1,2 @@
-# CI
-some CI proto
+# CD
+Continuos Delivery pipeline example
