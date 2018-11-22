@@ -1,15 +1,8 @@
-node {
-  try {
-    //this needs to be the very first steps!
-    deleteDir()
+ try {    
     checkout()
     version = readFile("version.txt")
-
-     
-      
+    
     def branch_type = get_branch_type(env.BRANCH_NAME)
-    echo env.BRANCH_NAME
-    echo branch_type
     currentBuild.displayName = "${version}-build${BUILD_NUMBER}"
     
 
@@ -44,58 +37,55 @@ node {
 
 //utility
 def checkout(){
-  stage('checkout') {
-    checkout scm
-  }
+	stage('checkout') {
+  		node{
+			deleteDir()
+    		checkout scm
+  		}
+	}
 }
 
 def commit_stage() {
-  stage('unit test') {
-    echo "running unit test..."
-  }
-  stage('sonarQube'){
-    echo "running static analysis..."
-  }
+	node{
+  		stage('unit test') {
+    		echo "running unit test..."
+  		}
+  		stage('sonarQube'){
+    		echo "running static analysis..."
+  		}
+	}
 }
 
 def publish_artifact(){
-  stage('publish') {
-      echo "package and publish artifact..."
-  }
+	node{
+  		stage('publish') {
+      	echo "package and publish artifact..."
+  		}
+	}
 }
 
 def deploy(String env){
-  stage(env + ' deploy'){
-  if( env == "STG") {
-  	timeout(time: 1, unit: 'MINUTES') {
-    		def nextVersion = input(
-        		id: 'nextVersion', message: 'insert next version: ', ok: 'ok', parameters: [string(description: 'enter the next development version', name: 'nextVersion')]
-    		)
+	stage(env + ' deploy'){
+  		if( env == "STG") {
+  			timeout(time: 1, unit: 'MINUTES') {
+    			def nextVersion = input(
+        			id: 'nextVersion', message: 'insert next version: ', ok: 'ok', parameters: [string(description: 'enter the next development version', name: 'nextVersion')]
+    				)
     
-		writeFile(file: "version.txt", text: nextVersion, encoding: "UTF-8")
-     
-     		withCredentials([usernamePassword(credentialsId: "GitHub", passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                	def urlGit = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
-			urlGit = urlGit.replace('https://','')
-                
-                	sh "git config user.email 'jenkins@example.com'"
-                	sh "git commit version.txt -m 'Bump version to ${nextVersion}'"
+				writeFile(file: "version.txt", text: nextVersion, encoding: "UTF-8")
+     			withCredentials([usernamePassword(credentialsId: "GitHub", passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+					def urlGit = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
+					urlGit = urlGit.replace('https://','')
 
-                	sh "git tag ${version}"
-                
-                	sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${urlGit} HEAD:master"
-                	sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${urlGit} ${version}"
-                 
+					sh "git config user.email 'jenkins@example.com'"
+					sh "git commit version.txt -m 'Bump version to ${nextVersion}'"
+
+					sh "git tag ${version}"
+
+					sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${urlGit} HEAD:master"
+					sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${urlGit} ${version}"
             	}
-	}
-    chooseOptions = input(id: 'chooseOptions',
-                message: 'Select zone(s)',    
-                parameters: [                           
-                  [$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Option A'],    
-                  [$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Option B'],
-                  [$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Option C']
-                ]   
-              )
+		}
     
     }
   
@@ -115,15 +105,19 @@ def deploy(String env){
 }
 
 def acceptance_test(){
-    stage('acceptance tests'){
-      echo "running acceptance test..."
-    }
+	node{
+    	stage('acceptance tests'){
+      		echo "running acceptance test..."
+    	}
+	}
 }
 
 def performance_test(){
-    stage('performance test'){
-      echo "running performance tests..."
-    }
+	node{
+    	stage('performance test'){
+      		echo "running performance tests..."
+    	}	
+	}
 }
 
 def get_branch_type(String branch_name) {
