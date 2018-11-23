@@ -17,7 +17,7 @@ node {
     
     if ( branch_type == "pr") {
       commit_stage()
-    } else if ( branch_type == "master") {
+    } else if ( branch_type == "master" || branch_type == "hotfix") {
       commit_stage()
       publish_artifact()
       deploy("INT")
@@ -135,6 +135,7 @@ def get_branch_type(String branch_name) {
     def master_pattern = ".*master"
     def release_pattern = ".*release/.*"
     def feature_pattern = ".*feature/.*"
+    def hotfix_pattern = ".*hotfix/.*"
     def pr_pattern = ".*PR-.*"
     def tag_pattern = sh(returnStdout: true, script: "git tag --contains | head -1").trim()
     if (branch_name =~ master_pattern) {
@@ -143,6 +144,8 @@ def get_branch_type(String branch_name) {
         return "release"
     } else if (branch_name =~ feature_pattern) {
         return "feature"
+    } else if (branch_name =~ hotfix_pattern) {
+        return "hotfix"
     } else if (tag_pattern) {
         return "tag"
     } else if (branch_name =~ pr_pattern) {
