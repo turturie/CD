@@ -54,7 +54,7 @@ def checkout(){
 
 def commit_stage() {
   stage('unit test') {
-    echo "running unit test..."
+    ech "running unit test..."
   }
   stage('sonarQube'){
     echo "running static analysis..."
