@@ -125,7 +125,7 @@ def acceptance_test(){
 
 def performance_test(){
     stage('performance test'){
-      echo "running performance tests..."
+      ech "running performance tests..."
     }
 
 }
