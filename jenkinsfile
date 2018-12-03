@@ -11,8 +11,7 @@ node {
     currentBuild.displayName = "${version}-build${BUILD_NUMBER}"
     
 
-  
-
+ 
 
     if ( branch_type == "pr") {
       commit_stage()
