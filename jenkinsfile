@@ -13,8 +13,7 @@ node {
     
 
  
- 
- 
+
 
     if ( branch_type == "pr") {
       commit_stage()
