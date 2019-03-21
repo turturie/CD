@@ -3,7 +3,7 @@ node {
     //this needs to be the very first steps!
     deleteDir()
     checkout()
-    version = readFile("version.txt")
+    version = sh(returnStdout: true, script: "git tag --sort version:refname | tail -1").trim()
 
     def branch_type = get_branch_type(env.BRANCH_NAME)
     echo env.BRANCH_NAME
