@@ -76,7 +76,7 @@ def deploy(String env){
                         parameters: [booleanParam(defaultValue: false, 
                         description: 'Do you want to releasemcurrent version?',name: 'Yes?')])
          
-     		withCredentials([usernamePassword(credentialsId: "GitHub", passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+     		withCredentials([usernamePassword(credentialsId: "angeles", passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                 	def urlGit = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
 			urlGit = urlGit.replace('https://','')
                 
