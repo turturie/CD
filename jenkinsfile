@@ -4,6 +4,7 @@ node {
     deleteDir()
     checkout()
     version = sh(returnStdout: true, script: "git tag --sort version:refname | tail -1").trim()
+    version = bumpMinorVersion(version)
 
     def branch_type = get_branch_type(env.BRANCH_NAME)
     echo env.BRANCH_NAME
@@ -151,4 +152,16 @@ def get_branch_type(String branch_name) {
         return null;
     }
 }
+
+// Increment the minor part of a `MAJOR.MINOR.PATCH` semver version.
+String bumpMinorVersion(String version) {
+    def parts = version.tokenize('.')
+    if (parts.size() != 3) {
+        error "${version} is not a valid MAJOR.MINOR.PATCH version"
+    }
+    def newMinorVersion = parts[1].toInteger() + 1
+
+    return "${parts[0]}.${newMinorVersion}.${parts[2]}"
+}
+
 
