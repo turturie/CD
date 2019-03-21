@@ -72,19 +72,16 @@ def deploy(String env){
   stage(env + ' deploy'){
   if( env == "STG") {
   	timeout(time: 1, unit: 'MINUTES') {
-    		def nextVersion = input(
-        		id: 'nextVersion', message: 'insert next version: ', ok: 'ok', parameters: [string(description: 'enter the next development version', name: 'nextVersion')]
-    		)
-    
-		writeFile(file: "version.txt", text: nextVersion, encoding: "UTF-8")
-     
+    		input(message: 'Do you like to release current version?', ok: 'Yes', 
+                        parameters: [booleanParam(defaultValue: false, 
+                        description: 'Do you want to releasemcurrent version?',name: 'Yes?')])
+         
      		withCredentials([usernamePassword(credentialsId: "GitHub", passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                 	def urlGit = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
 			urlGit = urlGit.replace('https://','')
                 
                 	sh "git config user.email 'jenkins@example.com'"
-                	sh "git commit version.txt -m 'Bump version to ${nextVersion}'"
-
+                	
                 	sh "git tag ${version}"
                 
                 	sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${urlGit} HEAD:master"
