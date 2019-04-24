@@ -1,4 +1,5 @@
 node {
+lock('mom-sat') {
   try {
     //this needs to be the very first steps!
     deleteDir()
@@ -40,6 +41,7 @@ node {
   } finally {
       echo "doing some cleanup..."
   }
+}
 }
 
 
