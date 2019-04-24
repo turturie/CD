@@ -26,10 +26,7 @@ lock('mom-sat') {
       deploy("PERF")
       performance_test()
       deploy("STG")
-    } else if (branch_type == "tag") {
-      
-      deploy("PROD")
-    }
+    } 
     
   } catch(err) { // timeout reached or input false
     def user = err.getCauses()[0].getUser()
